@@ -101,35 +101,15 @@ public class ProductService{
         return Response.ok().build();
     }
     
-    
-    
     // This method is called if XML is request
     @GET
     @Path("/todos")
     @Produces(MediaType.TEXT_XML)
     public String sayXMLHello() {
-    	
     	PersonDao p = new PersonDaoImpl();
     	List<Person> list = p.listPersons();
     	
-    	//Person person = p.getPerson();
-    	
-    	/*JAXBContext jaxbContext;
-    	Marshaller jaxbMarshaller;
-    	
-		try {
-			jaxbContext = JAXBContext.newInstance(Person.class);
-			jaxbMarshaller = jaxbContext.createMarshaller();
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-       
       return "<?xml version=\"1.0\"?>" + "<hello> Hello Jersey" + "</hello>";
-		
-		//return Response.ok(list).build();
     }
     
     public Map<Integer, Person> getList() {
@@ -189,8 +169,6 @@ public class ProductService{
 		
 		People list = new People();
 		
-		//List<Person> mylist = new ArrayList<Person>();
-		
 		Person p1 = new Person();
 		p1.setId(1);
 		p1.setPname("Eduardo");
@@ -209,10 +187,6 @@ public class ProductService{
 		list.getPeopleList().add(p1);
 		list.getPeopleList().add(p2);
 		list.getPeopleList().add(p3);
-		
-		//mylist.add(p1);
-		//mylist.add(p2);
-		//mylist.add(p3);
 		
 		GenericEntity<People> entity = new GenericEntity<People>(list, People.class);
 	    return Response.ok().entity(entity).build();
@@ -227,10 +201,6 @@ public class ProductService{
 		
 		People list = new People();
 		
-		//List<Person> mylist = new ArrayList<Person>();
-		
-		Gson gson = new Gson();
-		
 		Person p1 = new Person();
 		p1.setId(1);
 		p1.setPname("Eduardo");
@@ -250,18 +220,22 @@ public class ProductService{
 		list.getPeopleList().add(p2);
 		list.getPeopleList().add(p3);
 		
-		//mylist.add(p1);
-		//mylist.add(p2);
-		//mylist.add(p3);
-		
-		//GenericEntity<People> entity = new GenericEntity<People>(list, People.class);
-	    //return Response.ok().entity(entity).build();
-	    
-	    
+		Gson gson = new Gson();
 	    String jsonString = gson.toJson(list);
+	    
 	    return Response.status(Response.Status.OK).entity(jsonString).build();
+	}
+	
+	@POST
+	@Path("/postpeoplejson")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response postPeopleJsonList(String jsonpeople){
 		
-		//return list;
+		Gson gson = new Gson();
+		People list = gson.fromJson(jsonpeople, People.class);
+		
+	    return Response.status(Response.Status.OK).entity(jsonpeople).build();
 	}
     
     
