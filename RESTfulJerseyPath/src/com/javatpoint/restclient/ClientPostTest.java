@@ -134,6 +134,7 @@ public class ClientPostTest {
 	  //cp.createPerson();
 	  //cp.listPerson();
 	  cp.listPersonjson();
+	  System.out.println("");
 	}
 
   
