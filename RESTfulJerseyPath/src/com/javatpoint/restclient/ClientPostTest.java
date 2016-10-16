@@ -135,7 +135,7 @@ public class ClientPostTest {
 	  //cp.listPerson();
 	  cp.listPersonjson();
 	  System.out.println("");
-	  System.out.println("The second commit");
+	  
 	}
 
   
