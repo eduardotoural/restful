@@ -143,7 +143,7 @@ public class ClientPostTest {
 	  //cp.allPeopleJson();
 	  
 	  cp.postPeopleJsonList();
-
+	  System.out.println("");
 	}
 
   
