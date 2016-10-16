@@ -1,11 +1,8 @@
 package com.javatpoint.rest;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -14,14 +11,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-
 import com.google.gson.Gson;
 import com.javatpoint.aes.EncryptionController;
 import com.javatpoint.dao.PersonDao;
@@ -51,8 +43,8 @@ public class ProductService{
 	}
 	
     @POST  
-    @Path("/add")  
-    public Response addUser(
+    @Path("/insertperson")  
+    public Response insertPerson(
     	@FormParam("key") String key,
         @FormParam("id") int id,  
         @FormParam("name") String name,  
@@ -72,25 +64,29 @@ public class ProductService{
 		else{
 			returnResponse = " Wrong key, Denied Access ";
 		}
-		
-		return Response.status(200)  
-	            .entity(returnResponse)  
-	            .build();  
-		
-		//p.deletePerson(4);
-		
+		return Response.status(200).entity(returnResponse).build();  
     }  
+    
+    @POST
+	@Path("/addpeoplelist")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addPeopleList(String jsonpeople){
+		
+		Gson gson = new Gson();
+		People list = gson.fromJson(jsonpeople, People.class);
+		
+	    return Response.status(Response.Status.OK).entity(jsonpeople).build();
+	}
     
     @DELETE
     @Path("/delete/{id}")
     @Consumes("application/json")
-    public Response deleteEmployee(@PathParam("id") int id){
+    public Response deletePerson(@PathParam("id") int id){
         
         Person person = new Person();
         person.setId(id);
-		person.setPname("Aria");
-		person.setSalary(345);
-        
+
         PersonDao pd = new PersonDaoImpl();
         //int count = pd.deletePerson(person);
         int count = 1;
@@ -101,103 +97,27 @@ public class ProductService{
         return Response.ok().build();
     }
     
-    // This method is called if XML is request
     @GET
-    @Path("/todos")
-    @Produces(MediaType.TEXT_XML)
-    public String sayXMLHello() {
-    	PersonDao p = new PersonDaoImpl();
-    	List<Person> list = p.listPersons();
-    	
-      return "<?xml version=\"1.0\"?>" + "<hello> Hello Jersey" + "</hello>";
-    }
+	@Path("/findperson/{id}")
+    @Produces({ MediaType.APPLICATION_JSON})
+	public Response findPerson(@PathParam("id") Integer id){
+		
+	    Person person = new Person();
+	     
+	    person.setId(id);
+	    person.setPname("Lokesh Gupta");
+	
+	    Gson gson = new Gson();
+	    
+	    String jsonString = gson.toJson(person);
+	    
+	    return Response.status(Response.Status.OK).entity(jsonString).build();
+	}
     
-    public Map<Integer, Person> getList() {
-		return list;
-	}
-
-	public void setList(Map<Integer, Person> list) {
-		this.list = list;
-	}
-
-	@POST
-    @Path("/create")
-    @Consumes("application/json")
-    @Produces("application/json")
-    public Person createPerson(Person person){
-    	person.setId(idCounter.getAndIncrement());
-    	list.put(person.getId(), person);
-    	
-    	return person;
-    }
-	
-	@GET
-	@Path("/find")
-    @Produces({ MediaType.APPLICATION_XML})
-    //public Response findPerson(@QueryParam("id") String id){
-	public Response findPerson(){
-		
-	    Person emp = new Person();
-	     
-	    emp.setId(Integer.parseInt("1"));
-	    emp.setPname("Lokesh Gupta");
-	     
-	    GenericEntity<Person> entity = new GenericEntity<Person>(emp, Person.class);
-	    return Response.ok().entity(entity).build();
-		
-		//return list.get(Integer.parseInt(id));
-	}
-	
-	@GET
-    @Path("/oneperson")
-    @Produces({ MediaType.APPLICATION_JSON })
-	public String onePerson(){
-		//return "<?xml version=\"1.0\"?>" + "<hello> Hello Jersey" + "</hello>";
-		
-		StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Id : " + 3 + '\n');
-        stringBuilder.append("Author : " + "Eduardo" + '\n');
-        stringBuilder.append("Price : " + 234 + '\n');
-
-        return stringBuilder.toString();
-	}
-	
-	@GET
-	@Path("/listperson")
-	@Produces(MediaType.APPLICATION_XML)
-	public Response listPerson(){
-		
-		People list = new People();
-		
-		Person p1 = new Person();
-		p1.setId(1);
-		p1.setPname("Eduardo");
-		p1.setSalary(234);
-		
-		Person p2 = new Person();
-		p2.setId(2);
-		p2.setPname("Aria");
-		p2.setSalary(345);
-		
-		Person p3 = new Person();
-		p3.setId(1);
-		p3.setPname("Jenna");
-		p3.setSalary(645);
-		
-		list.getPeopleList().add(p1);
-		list.getPeopleList().add(p2);
-		list.getPeopleList().add(p3);
-		
-		GenericEntity<People> entity = new GenericEntity<People>(list, People.class);
-	    return Response.ok().entity(entity).build();
-		
-		//return list;
-	}
-	
-	@GET
-	@Path("/listpersonjson")
+    @GET
+	@Path("/allpeople")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response listPersonjson(){
+	public Response allPeople(){
 		
 		People list = new People();
 		
@@ -225,18 +145,13 @@ public class ProductService{
 	    
 	    return Response.status(Response.Status.OK).entity(jsonString).build();
 	}
-	
-	@POST
-	@Path("/postpeoplejson")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response postPeopleJsonList(String jsonpeople){
-		
-		Gson gson = new Gson();
-		People list = gson.fromJson(jsonpeople, People.class);
-		
-	    return Response.status(Response.Status.OK).entity(jsonpeople).build();
+
+	public Map<Integer, Person> getList() {
+		return list;
 	}
-    
+
+	public void setList(Map<Integer, Person> list) {
+		this.list = list;
+	}
     
 }  

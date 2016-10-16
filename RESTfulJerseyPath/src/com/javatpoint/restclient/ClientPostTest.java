@@ -12,7 +12,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.glassfish.jersey.client.ClientConfig;
-
 import com.google.gson.Gson;
 import com.javatpoint.aes.EncryptionController;
 import com.javatpoint.model.Person;
@@ -35,9 +34,23 @@ public class ClientPostTest {
 		form.add("name", "Eduardo");
 		form.add("price", "456");
 		
-		Response response = target.path("rest").path("product/add").request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED));
+		Response response = target.path("rest").path("product/insertperson").request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED));
 		
 		System.out.println("Response " + response.getEntity());
+	}
+	
+	public void addPeopleList(){
+		ClientConfig config = new ClientConfig();
+		Client client = ClientBuilder.newClient(config);
+	    WebTarget target = client.target(getBaseURI()).path("rest").path("product/addpeoplelist");
+
+		Gson gson = new Gson();
+	    String jsonString = gson.toJson(peopleList());
+		
+		Response response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(jsonString, MediaType.APPLICATION_JSON));
+		
+		System.out.println(response.getStatus());
+		System.out.println(response.readEntity(String.class));
 	}
 	
 	public void deletePerson(){
@@ -51,41 +64,19 @@ public class ClientPostTest {
 	public void findPerson(){
 		ClientConfig config = new ClientConfig();
 		Client client = ClientBuilder.newClient(config);
-		WebTarget webTarget = client.target(getBaseURI()).path("rest").path("product/find");
-		 
-		Invocation.Builder invocationBuilder =  webTarget.request(MediaType.APPLICATION_XML);
-		Response response = invocationBuilder.get();
-		 
-		Person employee = response.readEntity(Person.class);
-		     
-		System.out.println(response.getStatus());
-		System.out.println(employee);
+		WebTarget target = client.target(getBaseURI()).path("rest").path("product/findperson/").path("5");
 		
+		Response response = target.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).buildGet().invoke();
+	    Gson gson = new Gson();
+	    Person person = gson.fromJson(response.readEntity(String.class), Person.class);
+	    
+	    System.out.println(person.getId());
 	}
 	
-	public void listPerson(){
-		
-		ClientConfig config = new ClientConfig();
-		
-		Client client = ClientBuilder.newClient(config);
-	    WebTarget target = client.target(getBaseURI()).path("rest").path("product/listperson");
-	   
-	    Invocation.Builder invocationBuilder =  target.request(MediaType.APPLICATION_XML);
-	    Response response = invocationBuilder.get();
-		 
-		People people = response.readEntity(People.class);
-		List<Person> listOfPeople = people.getPeopleList();
-		     
-		System.out.println(response.getStatus());
-		System.out.println(Arrays.toString( listOfPeople.toArray(new Person[listOfPeople.size()]) ));
-		 
-	}
-	
-	public void allPeopleJson(){
-		
+	public void allPeople(){
 		ClientConfig config = new ClientConfig();
 		Client client = ClientBuilder.newClient(config);
-	    WebTarget target = client.target(getBaseURI()).path("rest").path("product/listpersonjson");
+	    WebTarget target = client.target(getBaseURI()).path("rest").path("product/allpeople");
 	    
 	    Response response = target.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).buildGet().invoke();
 
@@ -94,16 +85,10 @@ public class ClientPostTest {
 	    People people = gson.fromJson(response.readEntity(String.class), People.class);
 	    
 	    System.out.println(people.getPeopleList().get(0).getPname());
-	    //System.out.println(response.readEntity(String.class));
 	}
 	
-	public void postPeopleJsonList(){
-		ClientConfig config = new ClientConfig();
-		Client client = ClientBuilder.newClient(config);
-	    WebTarget target = client.target(getBaseURI()).path("rest").path("product/postpeoplejson");
-	    
-	    People list = new People();
-		
+	public People peopleList(){
+		People list = new People();
 		Person p1 = new Person();
 		p1.setId(1);
 		p1.setPname("Angel");
@@ -123,27 +108,19 @@ public class ClientPostTest {
 		list.getPeopleList().add(p2);
 		list.getPeopleList().add(p3);
 		
-		Gson gson = new Gson();
-	    String jsonString = gson.toJson(list);
-		
-		Response response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(jsonString, MediaType.APPLICATION_JSON));
-		
-		System.out.println(response.getStatus());
-		System.out.println(response.readEntity(String.class));
+		return peopleList();
 	}
 	
 	public static void main(String[] args) {
 		  
 	  ClientPostTest cp = new ClientPostTest();
-	  //cp.addPerson();
-	  //cp.deleteEmployee();
-	  //cp.createPerson();
-	  //cp.listPerson();
+	
+	  //cp.insertPerson();
+	  //cp.addPeopleList();
+	  //cp.deletePerson();
+	  //cp.findPerson();
+	  //cp.allPeople();
 	  
-	  //cp.allPeopleJson();
-	  
-	  cp.postPeopleJsonList();
-	  System.out.println("");
 	}
 
   
