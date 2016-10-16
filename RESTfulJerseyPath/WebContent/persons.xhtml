@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3c.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+<h:head>
+<script type="text/javascript" src="mycode.js"></script>
+
+
+</h:head>
+<h:body>
+
+	<h:form id="form">
+   
+        <p:dataTable var="person" value="#{controller.personList}" selectionMode="single" selection="#{controller.selectedPerson}" rowKey="#{person.id}">
+		   
+		    <p:column headerText="Id">
+		        <h:outputText value="#{person.id}" />
+		    </p:column>
+		 
+		    <p:column headerText="Name">
+		        <h:outputText value="#{person.pname}" />
+		    </p:column>
+		 
+		    <p:column headerText="Salary">
+		        <h:outputText value="#{person.salary}" />
+		    </p:column>
+		    
+		  <p:column headerText="Action" style="width:80px">
+           	<p:commandButton value="delete"  actionListener="#{controller.deletePerson(person)}" update="@form" process="@this"/>        
+         
+       	  </p:column>
+       	  
+       	  <p:column headerText="remove">
+       	  	<p:commandButton value="remove">
+       	  		<f:setPropertyActionListener value="#{person}" target="#{controller.selectedCar}" />  
+       	  	</p:commandButton>
+       	  </p:column>
+		    
+		</p:dataTable>
+	
+		<br/>
+		<p:growl id="message" showDetail="true" />
+		<p:commandButton value="Destroy the World">
+        	<p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-alert" />
+    	</p:commandButton>
+		
+		<p:dialog header="Person Info" widgetVar="personDialog" responsive="true" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+             <p:outputPanel id="personDetail" style="text-align:center;">
+                 <h:panelGrid  columns="2" >
+                     
+
+                     <h:outputText value="Id:" style="font-weight: bold"/>
+                     <h:outputText value="#{controller.person.id}" />
+
+                     <h:outputText value="Name" style="font-weight: bold"/>
+                     <h:outputText value="#{controller.person.pname}" />
+
+                     <h:outputText value="Salary:" style="font-weight: bold"/>
+                     <h:outputText value="#{controller.person.salary}" />
+
+                 </h:panelGrid>
+             </p:outputPanel>
+         </p:dialog>
+         
+         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        	<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check">
+        		
+        	</p:commandButton>
+        	
+        	<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    	 </p:confirmDialog>
+        
+    </h:form>
+
+    <br/>
+    
+</h:body>
+</html>
